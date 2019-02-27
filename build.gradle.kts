@@ -23,7 +23,7 @@ configure<JavaPluginConvention> { sourceCompatibility = JavaVersion.VERSION_1_8 
 tasks.withType<KotlinCompile> { kotlinOptions.jvmTarget = "1.8" }
 
 group = "de.movierank.graphql"
-version = "1.0-SNAPSHOT"
+version = "0.0.1-SNAPSHOT"
 
 application { mainClassName = "de.movierank.graphql.MainKt" }
 
@@ -43,21 +43,29 @@ val jupiterVersion = "5.2.0"
 val assertJVersion = "3.10.0"
 val restAssuredVersion = "3.1.0"
 val kGraphQLVersion = "0.3.0"
+val hikariCPVersion = "3.3.1"
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
 
     /*Ktor*/
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
-    implementation("io.ktor:ktor-jackson:$ktorVersion")
+    implementation("io.ktor:ktor-gson:$ktorVersion")
 
-    /*Graphql*/
+    /*Clients*/
+    implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
+
+    /*Auth*/
+    implementation("io.ktor:ktor-client-auth:$ktorVersion")
+    implementation("io.ktor:ktor-auth:$ktorVersion")
+
+    /*GraphQl*/
     implementation("com.github.pgutkowski:kgraphql:$kGraphQLVersion")
 
     /*DB Layer*/
     implementation("com.h2database:h2:$h2Version")
     implementation("org.jetbrains.exposed:exposed:$exposedVersion")
-    implementation("com.zaxxer:HikariCP:3.3.1")
+    implementation("com.zaxxer:HikariCP:$hikariCPVersion")
 
     /*Logging*/
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
