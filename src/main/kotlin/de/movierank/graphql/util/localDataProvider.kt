@@ -4,16 +4,17 @@ import com.google.gson.Gson
 import de.movierank.graphql.model.MovieResults
 import de.movierank.graphql.model.Movies
 import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.transactions.transaction
 import java.io.File
 
 val gsonProvider by lazy(LazyThreadSafetyMode.NONE) { Gson() }
 
-suspend fun loadLocalData() {
+fun loadLocalData() {
     val bufferedReader = File("src/main/resources/movies.json").bufferedReader()
     val data = bufferedReader.use { it.readText() }
     gsonProvider.fromJson(data, MovieResults::class.java).apply {
         results.forEach { movie ->
-            dbQuery {
+            transaction {
                 Movies.insert {
                     it[vote_count] = movie.vote_count
                     it[id] = movie.id
