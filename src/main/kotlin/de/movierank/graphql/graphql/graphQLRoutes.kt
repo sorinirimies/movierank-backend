@@ -1,8 +1,8 @@
 package de.movierank.graphql.graphql
 
+import com.github.pgutkowski.kgraphql.schema.Schema
 import com.google.gson.Gson
-import de.movierank.graphql.util.logger
-import de.movierank.graphql.util.movieRankSchema
+import de.movierank.graphql.logger
 import io.ktor.application.call
 import io.ktor.request.receive
 import io.ktor.response.respondText
@@ -22,7 +22,7 @@ fun GraphQLErrors.asMap(): Map<String, Map<String, String>> {
 
 data class GraphQLErrors(val e: Exception)
 
-fun Route.graphql(gson: Gson) {
+fun Route.graphql(gson: Gson, schema: Schema) {
     post("/graphql") {
 
         val request = call.receive<GraphQLRequest>()
@@ -34,7 +34,7 @@ fun Route.graphql(gson: Gson) {
         logger().info("the graphql variables: $variables")
 
         try {
-            val result = movieRankSchema.schema.execute(query, variables)
+            val result = schema.execute(query, variables)
             call.respondText(result)
         } catch (e: Exception) {
             call.respondText(gson.toJson(GraphQLErrors(e).asMap()))

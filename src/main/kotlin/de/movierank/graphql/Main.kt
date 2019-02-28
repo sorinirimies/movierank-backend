@@ -4,7 +4,7 @@ import de.movierank.graphql.graphql.graphql
 import de.movierank.graphql.util.gsonProvider
 import de.movierank.graphql.util.initExposedDb
 import de.movierank.graphql.util.loadLocalData
-import de.movierank.graphql.util.logger
+import de.movierank.graphql.util.movieRankSchema
 import io.ktor.application.Application
 import io.ktor.application.install
 import io.ktor.features.CallLogging
@@ -15,6 +15,11 @@ import io.ktor.http.content.default
 import io.ktor.http.content.static
 import io.ktor.routing.Routing
 import io.ktor.server.netty.EngineMain
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+
+
+fun logger(id: String = "Movierank-Server: "): Logger = LoggerFactory.getLogger(id)
 
 fun Application.module() {
     install(CallLogging)
@@ -25,7 +30,7 @@ fun Application.module() {
         }
     }
     install(Routing) {
-        graphql(gsonProvider)
+        graphql(gsonProvider, movieRankSchema.schema)
         static("/") {
             default("index.html")
         }

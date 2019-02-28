@@ -11,27 +11,19 @@ import org.jetbrains.exposed.sql.transactions.transaction
 class MoviesDbService : MoviesDao {
 
 
-    override fun getMovies(size: Int): List<Movie> {
-        var movies: List<Movie>? = null
-        transaction {
-            movies = Movies.selectAll()
-                .limit(size)
-                .map { it.toMovieItem() }
-        }
-        return movies ?: emptyList()
+    override fun getMovies(size: Int): List<Movie> = transaction {
+        Movies.selectAll()
+            .limit(size)
+            .map { it.toMovieItem() }
     }
 
-    override fun getMovie(title: String): Movie? {
-        var movie: Movie? = null
-        transaction {
-            Movies.select {
-                Movies.title.eq(title)
-            }.mapNotNull {
-                it.toMovieItem()
-            }
-        }.singleOrNull()
-        return movie
-    }
+    override fun getMovie(title: String): Movie? = transaction {
+        Movies.select {
+            Movies.title.eq(title)
+        }.mapNotNull {
+            it.toMovieItem()
+        }
+    }.singleOrNull()
 
     override fun addMovie(movie: Movie) {
         transaction {
@@ -52,7 +44,6 @@ class MoviesDbService : MoviesDao {
             }
         }
     }
-
 
     private fun ResultRow.toMovieItem() = Movie(
         vote_count = this[Movies.vote_count],
