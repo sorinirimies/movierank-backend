@@ -53,8 +53,9 @@ dependencies {
     implementation("io.ktor:ktor-gson:$ktorVersion")
 
     /*Clients*/
-    implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
-
+    implementation("io.ktor:ktor-client-gson:$ktorVersion")
+    implementation("io.ktor:ktor-client-apache:$ktorVersion")
+    
     /*Auth*/
     implementation("io.ktor:ktor-client-auth:$ktorVersion")
     implementation("io.ktor:ktor-auth:$ktorVersion")
