@@ -18,20 +18,42 @@ object Movies : Table() {
     val release_date = varchar("release_date", 300)
 }
 
-data class MovieResults(val results: List<Movie>)
 data class Movie(
-    val vote_count: Int,
-    val id: Int,
-    val video: Boolean,
-    val vote_average: Double,
-    val title: String,
-    val popularity: Double,
-    val poster_path: String?,
-    val original_language: String,
-    val original_title: String,
+    override val vote_count: Int,
+    override val id: Int,
+    override val video: Boolean,
+    override val vote_average: Double,
+    override val title: String,
+    override val popularity: Double,
+    override val poster_path: String?,
+    override val original_language: String,
+    override val original_title: String,
     val genre_ids: List<Int>? = null,
-    val backdrop_path: String?,
-    val adult: Boolean,
-    val overview: String,
-    val release_date: String
+    override val backdrop_path: String?,
+    override val adult: Boolean,
+    override val overview: String,
+    override val release_date: String
+) : MovieBase
+
+fun Movie.toMovieWithMainActor(castItem: CastItem) = MovieWithMainActor(
+    this.vote_count,
+    this.id,
+    this.video,
+    this.vote_average,
+    this.title,
+    this.popularity,
+    this.poster_path,
+    this.original_language,
+    this.original_title,
+    this.backdrop_path,
+    this.adult,
+    this.overview,
+    this.release_date,
+    castItem.cast_id,
+    castItem.character,
+    castItem.id,
+    castItem.name,
+    castItem.order,
+    this.id,
+    castItem.profile_path
 )
