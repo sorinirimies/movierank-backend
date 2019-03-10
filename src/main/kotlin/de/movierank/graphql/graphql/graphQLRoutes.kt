@@ -28,10 +28,10 @@ fun Route.graphql(gson: Gson, schema: Schema) {
         val request = call.receive<GraphQLRequest>()
 
         val query = request.query
-        logger().info("the graphql query: $query")
+        logger().info("graphql query: $query")
 
         val variables = gson.toJson(request.variables)
-        logger().info("the graphql variables: $variables")
+        logger().info("graphql variables: $variables")
 
         try {
             val result = schema.execute(query, variables)

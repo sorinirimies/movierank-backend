@@ -1,9 +1,11 @@
 package de.movierank.graphql.util
 
+import com.google.gson.Gson
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
+import de.movierank.graphql.db.MoviesRepository
 import de.movierank.graphql.logger
-import de.movierank.graphql.model.MovieResults
+import de.movierank.graphql.model.MoviesResult
 import de.movierank.graphql.model.Movies
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -19,6 +21,8 @@ fun initExposedDb() {
     }
 }
 
+val moviesRepositoryProvider by lazy { MoviesRepository() }
+
 private val hikari by lazy(LazyThreadSafetyMode.NONE) {
     HikariDataSource(HikariConfig().apply {
         driverClassName = "org.h2.Driver"
@@ -33,10 +37,10 @@ private val hikari by lazy(LazyThreadSafetyMode.NONE) {
 /**
  * Utility function to load movie data from JSON into the DB
  */
-fun loadLocalData() {
+fun loadLocalData(gson: Gson) {
     val bufferedReader = File("src/main/resources/movies.json").bufferedReader()
     val data = bufferedReader.use { it.readText() }
-    gsonProvider.fromJson(data, MovieResults::class.java).apply {
+    gson.fromJson(data, MoviesResult::class.java).apply {
         results.forEach { movie ->
             transaction {
                 Movies.insert {

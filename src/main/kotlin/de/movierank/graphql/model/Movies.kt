@@ -28,7 +28,6 @@ data class Movie(
     override val poster_path: String?,
     override val original_language: String,
     override val original_title: String,
-    val genre_ids: List<Int>? = null,
     override val backdrop_path: String?,
     override val adult: Boolean,
     override val overview: String,

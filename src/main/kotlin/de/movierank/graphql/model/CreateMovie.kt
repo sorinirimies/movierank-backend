@@ -11,7 +11,6 @@ fun CreateMovie.toMovie() = Movie(
     poster_path = this.poster_path,
     original_language = this.original_language,
     original_title = this.original_title,
-    genre_ids = this.genre_ids,
     backdrop_path = this.backdrop_path ?: "",
     adult = this.adult,
     overview = this.overview,

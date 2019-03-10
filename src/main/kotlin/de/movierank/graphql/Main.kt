@@ -15,18 +15,21 @@ import io.ktor.http.content.default
 import io.ktor.http.content.static
 import io.ktor.routing.Routing
 import io.ktor.server.netty.EngineMain
+import io.ktor.util.KtorExperimentalAPI
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 
 fun logger(id: String = "Movierank-Server: "): Logger = LoggerFactory.getLogger(id)
 
+@KtorExperimentalAPI
 fun Application.module() {
     install(CallLogging)
     install(DefaultHeaders)
     install(ContentNegotiation) {
         gson {
             setPrettyPrinting()
+            setDateFormat("dd.mm.yyyy")
         }
     }
     install(Routing) {
@@ -36,7 +39,7 @@ fun Application.module() {
         }
     }
     initExposedDb().also {
-        loadLocalData()
+        loadLocalData(gsonProvider)
     }
     logger().info("App loaded.")
 }

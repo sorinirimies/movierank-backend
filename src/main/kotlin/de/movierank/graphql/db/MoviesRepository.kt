@@ -1,5 +1,7 @@
 package de.movierank.graphql.db
 
+import de.movierank.graphql.model.Cast
+import de.movierank.graphql.model.CastItem
 import de.movierank.graphql.model.Movie
 import de.movierank.graphql.model.Movies
 import org.jetbrains.exposed.sql.ResultRow
@@ -8,12 +10,33 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
-class MoviesDbService : MoviesDao {
+class MoviesRepository : MoviesDao {
 
+    override fun getCast(movieId: Int): List<CastItem> = transaction {
+        Cast.select { Cast.movieId.eq(movieId) }.map { it.toCastItem() }
+    }
 
     override fun getMovies(size: Int): List<Movie> = transaction {
         Movies.selectAll()
             .limit(size)
+            .map { it.toMovieItem() }
+    }
+
+    override fun addCast(cast: CastItem, castMovieId: Int): CastItem {
+        transaction {
+            Cast.insert {
+                it[cast_id] = cast.cast_id
+                it[name] = cast.name
+                it[movieId] = castMovieId
+                it[id] = cast.id
+                it[profile_path] = cast.profile_path ?: ""
+            }
+        }
+        return cast
+    }
+
+    override fun getPopularMoviesByYear(year: Int) = transaction {
+        Movies.selectAll()
             .map { it.toMovieItem() }
     }
 
@@ -25,7 +48,7 @@ class MoviesDbService : MoviesDao {
         }
     }.singleOrNull()
 
-    override fun addMovie(movie: Movie) {
+    override fun addMovie(movie: Movie): Movie {
         transaction {
             Movies.insert {
                 it[vote_count] = movie.vote_count
@@ -43,6 +66,7 @@ class MoviesDbService : MoviesDao {
                 it[release_date] = movie.release_date
             }
         }
+        return movie
     }
 
     private fun ResultRow.toMovieItem() = Movie(
@@ -59,6 +83,16 @@ class MoviesDbService : MoviesDao {
         adult = this[Movies.adult],
         overview = this[Movies.overview],
         release_date = this[Movies.release_date]
+    )
+
+    private fun ResultRow.toCastItem() = CastItem(
+        id = this[Cast.id],
+        cast_id = this[Cast.cast_id],
+        name = this[Cast.name],
+        character = this[Cast.character],
+        order = this[Cast.order],
+        profile_path = this[Cast.profile_path],
+        movieId = this[Cast.movieId]
     )
 
 }
