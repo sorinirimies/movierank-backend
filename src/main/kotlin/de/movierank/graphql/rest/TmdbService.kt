@@ -24,10 +24,7 @@ private const val API_KEY = "api_key=b9f60672dcb1fa228e1146eb64afa9da"
 class TmdbService : TmdbApi, CoroutineScope {
 
     private val job: Job by lazy(LazyThreadSafetyMode.NONE) { Job() }
-    override val coroutineContext: CoroutineContext
-        get() = job + Dispatchers.Default
-
-    private val client by lazy {
+    private val client by lazy(LazyThreadSafetyMode.NONE) {
         HttpClient(Apache) {
             install(JsonFeature) {
                 serializer = GsonSerializer {
@@ -38,6 +35,9 @@ class TmdbService : TmdbApi, CoroutineScope {
             }
         }
     }
+
+    override val coroutineContext: CoroutineContext
+        get() = job + Dispatchers.Default
 
     override fun getMovieCast(movieId: Int): List<CastItem> {
         val castList = arrayListOf<CastItem>()
