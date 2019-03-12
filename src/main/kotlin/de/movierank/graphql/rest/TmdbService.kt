@@ -1,5 +1,3 @@
-@file:JvmName("TmdbApiKt")
-
 package de.movierank.graphql.rest
 
 import de.movierank.graphql.logger

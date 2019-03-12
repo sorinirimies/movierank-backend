@@ -11,9 +11,7 @@ class MovierankSchema(moviesDao: MoviesDao, tmdbService: TmdbService) {
     @KtorExperimentalAPI
     val schema = KGraphQL.schema {
 
-        configure {
-            useDefaultPrettyPrinter = true
-        }
+        configure { useDefaultPrettyPrinter = true }
 
         query("movie") {
             description = "Returns a movie item based on the queried name"
@@ -22,17 +20,17 @@ class MovierankSchema(moviesDao: MoviesDao, tmdbService: TmdbService) {
             }
         }
 
-        query("movies") {
+        query("localDbMovies") {
             description = "Returns the entire list of movies"
-            resolver { size: Int? -> moviesDao.getMovies(size ?: 10) }.withArgs {
-                arg<Int> { name = "size"; defaultValue = 10; description = "The number of creditsList returned" }
+            resolver { size: Int? -> moviesDao.getMovies(size ?: 30) }.withArgs {
+                arg<Int> { name = "size"; defaultValue = 20; description = "The number of creditsList returned" }
             }
         }
 
-        query("popularMovies") {
+        query("moviesByYear") {
             description = "Returns a list of popular movies"
-            resolver { year: Int -> tmdbService.getPopularMoviesByYear(year) }.withArgs {
-                arg<Int> { name = "year"; defaultValue = 2016; description = "Popular movies retrieved based on year" }
+            resolver { year: Int? -> tmdbService.getPopularMoviesByYear(year ?: 2018) }.withArgs {
+                arg<Int> { name = "year"; defaultValue = 2018; description = "Popular movies retrieved based on year" }
             }
         }
         query("movieCast") {
@@ -41,7 +39,7 @@ class MovierankSchema(moviesDao: MoviesDao, tmdbService: TmdbService) {
                 arg<Int> { name = "movieId"; defaultValue = 332562; description = "The id of the movie" }
             }
         }
-        query("moviesWithMainActors") {
+        query("moviesByYearWithMainActors") {
             description = "A list of movies with adjacent credits"
             resolver { year: Int? -> tmdbService.getPopularMoviesWithMainActors(year ?: 2018) }.withArgs {
                 arg<Int> {
